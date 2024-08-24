@@ -59,6 +59,7 @@ return ResponseEntity.ok(optionalMovie.get());
         movie.setSynopsis(movieDetails.getSynopsis());
         movie.setStatus(movieDetails.getStatus());
         movie.setPosterUrl(movie.getPosterUrl());
+        movie.setCountry(movieDetails.getCountry());
 
         Movie updatedMovie = movieRepository.save(movie);
         return ResponseEntity.ok(updatedMovie);
@@ -73,5 +74,14 @@ return ResponseEntity.ok(optionalMovie.get());
     movieRepository.delete(movie);
     return ResponseEntity.noContent().build();
 }
+
+    @GetMapping("/search-country")
+    public ResponseEntity<List<Movie>> getMoviesByCountry(@RequestParam String searchTerms) {
+        List<Movie> movie = movieRepository.findByCountry(searchTerms);
+        if (movie.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(movie);
+    }
 
 }

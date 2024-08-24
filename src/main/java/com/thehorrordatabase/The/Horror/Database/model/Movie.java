@@ -13,6 +13,9 @@ public class Movie {
     @Column(name = "title", nullable = false, length = 255)
     private String title;
 
+    @Column(name = "country", nullable = false, length = 255)
+    private String country;
+
     @Column(name = "release_year", nullable = false)
     private Integer releaseYear;
 
@@ -67,6 +70,14 @@ public class Movie {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public Integer getReleaseYear() {
