@@ -3,11 +3,10 @@ package com.thehorrordatabase.The.Horror.Database.controller;
 import com.thehorrordatabase.The.Horror.Database.model.Movie;
 import com.thehorrordatabase.The.Horror.Database.repository.MovieRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -24,11 +23,11 @@ public class MovieController {
 
     @GetMapping
     public ResponseEntity<List<Movie>> getAllMovies() {
-        List<Movie> articles = movieRepository.findAll();
-        if (articles.isEmpty()) {
+        List<Movie> Movies = movieRepository.findAll();
+        if (Movies.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(articles);
+        return ResponseEntity.ok(Movies);
     }
 
     @GetMapping("/{id}")
@@ -46,4 +45,33 @@ return ResponseEntity.ok(optionalMovie.get());
        Movie savedMovie = movieRepository.save(movie);
        return ResponseEntity.status(HttpStatus.CREATED).body(savedMovie);
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<Movie> updateMovie(@PathVariable Long id, @RequestBody Movie movieDetails) {
+
+        Movie movie = movieRepository.findById(id).orElse(null);
+        if (movie == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        movie.setTitle(movieDetails.getTitle());
+        movie.setReleaseYear(movieDetails.getReleaseYear());
+        movie.setDirector(movieDetails.getDirector());
+        movie.setSynopsis(movieDetails.getSynopsis());
+        movie.setStatus(movieDetails.getStatus());
+        movie.setPosterUrl(movie.getPosterUrl());
+
+        Movie updatedMovie = movieRepository.save(movie);
+        return ResponseEntity.ok(updatedMovie);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteMovie(@PathVariable Long id) {
+    Movie movie = movieRepository.findById(id).orElse(null);
+        if (movie == null) {
+        return ResponseEntity.notFound().build();
+    }
+    movieRepository.delete(movie);
+    return ResponseEntity.noContent().build();
+}
+
 }
