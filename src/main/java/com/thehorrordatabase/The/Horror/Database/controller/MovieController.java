@@ -83,5 +83,17 @@ return ResponseEntity.ok(optionalMovie.get());
         }
         return ResponseEntity.ok(movie);
     }
+    @GetMapping("/search-between-release-date")
+    public ResponseEntity<List<Movie>> getMoviesBetweenReleaseYear(@RequestParam Integer startYear, @RequestParam Integer endYear) {
+        if (startYear > endYear) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        List<Movie> movies = movieRepository.findByReleaseYearBetween(startYear, endYear);
+
+        if (movies.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(movies);
+    }
 
 }
