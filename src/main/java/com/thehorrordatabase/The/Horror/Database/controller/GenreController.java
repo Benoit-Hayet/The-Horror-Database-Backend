@@ -51,7 +51,7 @@ public ResponseEntity<Genre> updatedGenre(@PathVariable Long id,@RequestBody Gen
  if (genre == null){
      return ResponseEntity.notFound().build();
  }
- genre.setGenre(genreDetails.getGenre());
+ genre.setName(genreDetails.getName());
 
  Genre updatedGenre = genreRepository.save(genre);
  return ResponseEntity.ok(updatedGenre);

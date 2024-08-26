@@ -1,14 +1,15 @@
 package com.thehorrordatabase.The.Horror.Database.model;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
+import java.util.List;
+
 
 @Entity
 public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long movie_Id;
+    private Long id;
 
     @Column(name = "title", nullable = false, length = 255)
     private String title;
@@ -38,13 +39,20 @@ public class Movie {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    // Mise en place du constructeur.
+    @ManyToMany
+    @JoinTable(
+            name = "movie_genre",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    private List<Genre> genres;
 
     public Movie() {
     }
 
-    public Movie(String title, Integer releaseYear, String director, String synopsis, Status status, String posterUrl, Integer createdBy, LocalDateTime createdAt) {
+    public Movie(String title, String country, Integer releaseYear, String director, String synopsis, Status status, String posterUrl, Integer createdBy, LocalDateTime createdAt, List<Genre> genres) {
         this.title = title;
+        this.country = country;
         this.releaseYear = releaseYear;
         this.director = director;
         this.synopsis = synopsis;
@@ -52,16 +60,17 @@ public class Movie {
         this.posterUrl = posterUrl;
         this.createdBy = createdBy;
         this.createdAt = createdAt;
+        this.genres = genres;
     }
 
-    // Mise en place des getter et setter
+    // Getters and Setters
 
-    public Long getMovieId() {
-        return movie_Id;
+    public Long getId() {
+        return id;
     }
 
-    public void setMovieId(Long movieId) {
-        this.movie_Id = movieId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -136,6 +145,14 @@ public class Movie {
         this.createdAt = createdAt;
     }
 
+    public List<Genre> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(List<Genre> genres) {
+        this.genres = genres;
+    }
+
     // Enum for Status
     public enum Status {
         REFUSED,
@@ -143,4 +160,3 @@ public class Movie {
         APPROVED
     }
 }
-
