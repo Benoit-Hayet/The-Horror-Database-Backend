@@ -1,29 +1,31 @@
 package com.thehorrordatabase.The.Horror.Database.dto;
 
-import com.thehorrordatabase.The.Horror.Database.model.Movie;
+import com.thehorrordatabase.The.Horror.Database.model.EStatus;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class MovieDTO {
-    private Long movieId;
+    private Long id;
     private String title;
     private String country;
     private Integer releaseYear;
     private String director;
     private String synopsis;
-    private Movie.Status status;
+    private EStatus status;
     private String posterUrl;
     private Integer createdBy;
     private LocalDateTime createdAt;
+  private List<String> genreName;
 
     // Getters and Setters
 
-    public Long getMovieId() {
-        return movieId;
+    public Long getId() {
+        return id;
     }
 
-    public void setMovieId(Long movieId) {
-        this.movieId = movieId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -66,11 +68,11 @@ public class MovieDTO {
         this.synopsis = synopsis;
     }
 
-    public Movie.Status getStatus() {
+    public EStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Movie.Status status) {
+    public void setStatus(EStatus status) {
         this.status = status;
     }
 
@@ -96,5 +98,13 @@ public class MovieDTO {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<String> getGenreName() {
+        return genreName;
+    }
+
+    public void setGenreName(List<String> genreName) {
+        this.genreName = genreName;
     }
 }
