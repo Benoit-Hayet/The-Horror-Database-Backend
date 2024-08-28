@@ -29,31 +29,28 @@ public class MovieController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Movie>> getAllMovies() {
-        List<Movie> Movies = movieRepository.findAll();
-        if (Movies.isEmpty()) {
+    public ResponseEntity<List<MovieDTO>> getAllMovies() {
+        List<Movie> movies = movieRepository.findAll();
+        if (movies.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(Movies);
+        List<MovieDTO>movieDTOs = movies.stream().map(this::convertToDTO).collect(Collectors.toList());
+        return ResponseEntity.ok(movieDTOs);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Movie>getMovieById(@PathVariable Long id) {
+    public ResponseEntity<MovieDTO>getMovieById(@PathVariable Long id) {
 Optional<Movie> optionalMovie = movieRepository.findById(id);
 if (!optionalMovie.isPresent()) {
     return ResponseEntity.notFound().build();
 }
-return ResponseEntity.ok(optionalMovie.get());
+Movie movie = optionalMovie.get();
+return ResponseEntity.ok(convertToDTO(movie));
     }
 
-    /*@PostMapping
-    public ResponseEntity<Movie> createMovie(@RequestBody Movie movie) {
-        movie.setCreatedAt(LocalDateTime.now());
-       Movie savedMovie = movieRepository.save(movie);
-       return ResponseEntity.status(HttpStatus.CREATED).body(savedMovie);
-    }*/
+
     @PostMapping
-    public ResponseEntity<MovieDTO> createArticle(@RequestBody Movie movie) {
+    public ResponseEntity<MovieDTO> createMovie(@RequestBody Movie movie) {
         movie.setCreatedAt(LocalDateTime.now());
 
         if (movie.getGenres() != null && !movie.getGenres().isEmpty()) {
@@ -113,10 +110,10 @@ return ResponseEntity.ok(optionalMovie.get());
                     validGenres.add(savedGenre);
                 }
             }
-            // Mettre à jour la liste des images associées
+            // Mettre à jour la liste des images associés
             movie.setGenres(validGenres);
         } else {
-            // Si aucun genre n'est fournie, on nettoie la liste des images associées
+            // Si aucun genre n'est fournie, on nettoie la liste des genres associés
             movie.getGenres().clear();
         }
 

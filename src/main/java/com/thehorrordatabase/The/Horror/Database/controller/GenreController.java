@@ -70,13 +70,6 @@ public class GenreController {
         return ResponseEntity.noContent().build();
     }
 
-    /*private GenreDTO convertToDTO (Genre genre){
-        GenreDTO genreDTO = new GenreDTO();
-        genreDTO.setId(genre.getId());
-        genreDTO.setName(genre.getName());
-        return genreDTO;
-    }
-     */
     private GenreDTO convertToDTO(Genre genre) {
         GenreDTO genreDTO = new GenreDTO();
         genreDTO.setId(genre.getId());
