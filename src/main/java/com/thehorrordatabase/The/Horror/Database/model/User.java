@@ -1,9 +1,8 @@
 package com.thehorrordatabase.The.Horror.Database.model;
 
+
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
-
 
 @Entity
 public class User {
@@ -12,33 +11,49 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "fist_name",nullable = false,length = 50 )
-    private String first_name;
+    @Column(name = "first_name", length = 50)
+    private String firstName;
 
-    @Column(name = "last_name", nullable = false,length = 50)
-    private String last_name;
+    @Column(name = "last_name", nullable = false, length = 50)
+    private String lastName;
 
-    @Column(name = "email",nullable = false,length = 255)
+    @Column(name = "email", nullable = false, length = 255)
     private String email;
 
-    @Column(name = "password",nullable = false,length = 50)
+    @Column(name = "password", nullable = false, length = 50)
     private String password;
 
-    @Column(name = "username",nullable = false,length = 50)
+    @Column(name = "username", nullable = false, length = 50)
     private String username;
 
-    @Column(name = "avatar_url",length = 500)
-    private String avatar_url;
+    @Column(name = "avatar_url", nullable = false, length = 500)
+    private String avatarUrl;
 
-    @Column(name = "role",nullable = false,length = 50)
+    @Column(name = "role", nullable = false, length = 50)
     private String role;
 
-    @Column(name = "birthdate",length = 255)
+    @Column(name = "birthdate")
     private LocalDate birthdate;
 
-    @Column(name = "created_at",length = 255)
-    private LocalDate created_at;
+    @Column(name = "created_at")
+    private LocalDate createdAt;
 
+    public User() {
+    }
+
+    public User(String firstName, String lastName, String email, String password, String username, String avatarUrl, String role, LocalDate birthdate, LocalDate createdAt) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.username = username;
+        this.avatarUrl = avatarUrl;
+        this.role = role;
+        this.birthdate = birthdate;
+        this.createdAt = createdAt;
+    }
+
+    // Getters and Setters...
 
     public Long getId() {
         return id;
@@ -48,20 +63,20 @@ public class User {
         this.id = id;
     }
 
-    public String getFirst_name() {
-        return first_name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFirst_name(String first_name) {
-        this.first_name = first_name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getLast_name() {
-        return last_name;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setLast_name(String last_name) {
-        this.last_name = last_name;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getEmail() {
@@ -88,12 +103,12 @@ public class User {
         this.username = username;
     }
 
-    public String getAvatar_url() {
-        return avatar_url;
+    public String getAvatarUrl() {
+        return avatarUrl;
     }
 
-    public void setAvatar_url(String avatar_url) {
-        this.avatar_url = avatar_url;
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     public String getRole() {
@@ -112,11 +127,11 @@ public class User {
         this.birthdate = birthdate;
     }
 
-    public LocalDate getCreated_at() {
-        return created_at;
+    public LocalDate getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(LocalDate created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 }

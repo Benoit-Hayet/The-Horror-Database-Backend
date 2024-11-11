@@ -40,14 +40,9 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDTO> createUser(@RequestBody User user) {
-        if (user.getAvatar_url() == null || user.getAvatar_url().isEmpty()) {
-            return ResponseEntity.status(400).body(null); // Retourne une réponse 400 si l'avatar_url est nul ou vide
-        }
-
         User savedUser = userRepository.save(user);
         return ResponseEntity.status(201).body(convertToDTO(savedUser));
     }
-
 
     @PutMapping("/{id}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
@@ -55,15 +50,15 @@ public class UserController {
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
-        user.setFirst_name(userDetails.getFirst_name());
-        user.setLast_name(userDetails.getLast_name());
+        user.setFirstName(userDetails.getFirstName());
+        user.setLastName(userDetails.getLastName());
         user.setEmail(userDetails.getEmail());
         user.setPassword(userDetails.getPassword());
         user.setUsername(userDetails.getUsername());
-        user.setAvatar_url(userDetails.getAvatar_url());
+        user.setAvatarUrl(userDetails.getAvatarUrl());
         user.setRole(userDetails.getRole());
         user.setBirthdate(userDetails.getBirthdate());
-        user.setCreated_at(userDetails.getCreated_at());
+        user.setCreatedAt(userDetails.getCreatedAt());
 
         User updatedUser = userRepository.save(user);
         return ResponseEntity.ok(convertToDTO(updatedUser));
@@ -82,15 +77,15 @@ public class UserController {
     private UserDTO convertToDTO(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
-        userDTO.setFirstName(user.getFirst_name());
-        userDTO.setLastName(user.getLast_name());
+        userDTO.setFirstName(user.getFirstName());
+        userDTO.setLastName(user.getLastName());
         userDTO.setEmail(user.getEmail());
         userDTO.setPassword(user.getPassword());
         userDTO.setUsername(user.getUsername());
-        userDTO.setAvatarUrl(user.getAvatar_url());
+        userDTO.setAvatarUrl(user.getAvatarUrl());
         userDTO.setRole(user.getRole());
         userDTO.setBirthdate(user.getBirthdate());
-        userDTO.setCreatedAt(user.getCreated_at());
+        userDTO.setCreatedAt(user.getCreatedAt());
         return userDTO;
     }
 }
