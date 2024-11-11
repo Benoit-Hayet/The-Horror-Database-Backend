@@ -1,6 +1,9 @@
 package com.thehorrordatabase.The.Horror.Database.controller;
 
+import com.thehorrordatabase.The.Horror.Database.dto.MovieDTO;
+import com.thehorrordatabase.The.Horror.Database.model.Genre;
 import com.thehorrordatabase.The.Horror.Database.model.Movie;
+import com.thehorrordatabase.The.Horror.Database.repository.GenreRepository;
 import com.thehorrordatabase.The.Horror.Database.repository.MovieRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,45 +11,73 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/movies")
 public class MovieController {
 
     private final MovieRepository movieRepository;
+    private final GenreRepository genreRepository;
 
-    public MovieController(MovieRepository movieRepository) {
+    public MovieController(MovieRepository movieRepository, GenreRepository genreRepository) {
         this.movieRepository = movieRepository;
+        this.genreRepository = genreRepository;
     }
 
     @GetMapping
-    public ResponseEntity<List<Movie>> getAllMovies() {
-        List<Movie> Movies = movieRepository.findAll();
-        if (Movies.isEmpty()) {
+    public ResponseEntity<List<MovieDTO>> getAllMovies() {
+        List<Movie> movies = movieRepository.findAll();
+        if (movies.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(Movies);
+        List<MovieDTO>movieDTOs = movies.stream().map(this::convertToDTO).collect(Collectors.toList());
+        return ResponseEntity.ok(movieDTOs);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Movie>getMovieById(@PathVariable Long id) {
+    public ResponseEntity<MovieDTO>getMovieById(@PathVariable Long id) {
 Optional<Movie> optionalMovie = movieRepository.findById(id);
 if (!optionalMovie.isPresent()) {
     return ResponseEntity.notFound().build();
 }
-return ResponseEntity.ok(optionalMovie.get());
+Movie movie = optionalMovie.get();
+return ResponseEntity.ok(convertToDTO(movie));
     }
 
+
     @PostMapping
-    public ResponseEntity<Movie> createMovie(@RequestBody Movie movie) {
+    public ResponseEntity<MovieDTO> createMovie(@RequestBody Movie movie) {
         movie.setCreatedAt(LocalDateTime.now());
-       Movie savedMovie = movieRepository.save(movie);
-       return ResponseEntity.status(HttpStatus.CREATED).body(savedMovie);
+
+        if (movie.getGenres() != null && !movie.getGenres().isEmpty()) {
+            List<Genre> validGenres = new ArrayList<>();
+            for (Genre genre : movie.getGenres()) {
+                if (genre.getId() != null) {
+                    // Vérification des genres existants
+                    Genre existingGenre = genreRepository.findById(genre.getId()).orElse(null);
+                    if (existingGenre != null) {
+                        validGenres.add(existingGenre);
+                    } else {
+                        return ResponseEntity.badRequest().body(null);
+                    }
+                } else {
+                    // Création d'un nouveau genre
+                    Genre savedGenre = genreRepository.save(genre);
+                    validGenres.add(savedGenre);
+                }
+            }
+            movie.setGenres(validGenres);
+        }
+
+        Movie savedMovie = movieRepository.save(movie);
+        return ResponseEntity.status(HttpStatus.CREATED).body(convertToDTO(savedMovie));
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Movie> updateMovie(@PathVariable Long id, @RequestBody Movie movieDetails) {
+    public ResponseEntity<MovieDTO> updateMovie(@PathVariable Long id, @RequestBody Movie movieDetails) {
 
         Movie movie = movieRepository.findById(id).orElse(null);
         if (movie == null) {
@@ -61,8 +92,33 @@ return ResponseEntity.ok(optionalMovie.get());
         movie.setPosterUrl(movie.getPosterUrl());
         movie.setCountry(movieDetails.getCountry());
 
+        if (movieDetails.getGenres() != null) {
+            List<Genre> validGenres = new ArrayList<>();
+            for (Genre genre : movieDetails.getGenres()) {
+                if (genre.getId() != null) {
+                    // Vérification d'un genre existant
+                    Genre existingGenre = genreRepository.findById(genre.getId()).orElse(null);
+                    if (existingGenre != null) {
+                        validGenres.add(existingGenre);
+                    } else {
+                        return ResponseEntity.badRequest().build();
+                        // Genre non trouvé, retour d'une erreur
+                    }
+                } else {
+                    // Création d'un nouveau genre
+                    Genre savedGenre = genreRepository.save(genre);
+                    validGenres.add(savedGenre);
+                }
+            }
+            // Mettre à jour la liste des images associés
+            movie.setGenres(validGenres);
+        } else {
+            // Si aucun genre n'est fournie, on nettoie la liste des genres associés
+            movie.getGenres().clear();
+        }
+
         Movie updatedMovie = movieRepository.save(movie);
-        return ResponseEntity.ok(updatedMovie);
+        return ResponseEntity.ok(convertToDTO(updatedMovie));
     }
 
     @DeleteMapping("/{id}")
@@ -96,4 +152,23 @@ return ResponseEntity.ok(optionalMovie.get());
         return ResponseEntity.ok(movies);
     }
 
-}
+    private MovieDTO convertToDTO(Movie movie){
+        MovieDTO movieDTO = new MovieDTO();
+        movieDTO.setId(movie.getId());
+        movieDTO.setTitle(movie.getTitle());
+        movieDTO.setCountry(movie.getCountry());
+        movieDTO.setReleaseYear(movie.getReleaseYear());
+        movieDTO.setDirector(movie.getDirector());
+        movieDTO.setSynopsis(movie.getSynopsis());
+        movieDTO.setStatus(movie.getStatus());
+        movieDTO.setPosterUrl(movie.getPosterUrl());
+        movieDTO.setCreatedBy(movie.getCreatedBy());
+        movieDTO.setCreatedAt(movie.getCreatedAt());
+        if (movie.getGenres() != null) {
+            movieDTO.setGenreName(movie.getGenres().stream().map(Genre::getName).collect(Collectors.toList()));
+        }
+        return movieDTO;
+    }
+
+    }
+

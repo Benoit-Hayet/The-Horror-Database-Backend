@@ -1,5 +1,6 @@
 package com.thehorrordatabase.The.Horror.Database.controller;
 
+import com.thehorrordatabase.The.Horror.Database.dto.GenreDTO;
 import com.thehorrordatabase.The.Horror.Database.model.Genre;
 import com.thehorrordatabase.The.Horror.Database.model.Movie;
 import com.thehorrordatabase.The.Horror.Database.repository.GenreRepository;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/genres")
@@ -20,42 +21,44 @@ public class GenreController {
     public GenreController(GenreRepository genreRepository) {
         this.genreRepository = genreRepository;
     }
+
     @GetMapping
-    public ResponseEntity <List<Genre>> getAllGenres() {
-        List<Genre> Genres = genreRepository.findAll();
-        if (Genres.isEmpty()) {
+    public ResponseEntity<List<GenreDTO>> getAllGenres() {
+        List<Genre> genres = genreRepository.findAll();
+        if (genres.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(Genres);
+        List<GenreDTO> genreDTOs = genres.stream().map(this::convertToDTO).collect(Collectors.toList());
+        return ResponseEntity.ok(genreDTOs);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Genre>getGenreById(@PathVariable Long id){
-        Optional<Genre> GenreId = genreRepository.findById(id);
-        if (GenreId.isEmpty()){
+    public ResponseEntity<GenreDTO> getGenreById(@PathVariable Long id) {
+        Genre genreId = genreRepository.findById(id).orElse(null);
+        if (genreId == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(GenreId.get());
+        return ResponseEntity.ok(convertToDTO(genreId));
     }
 
 
-@PostMapping
-public ResponseEntity<Genre> createGenre(@RequestBody Genre genre){
-    Genre savedGenre = genreRepository.save(genre);
-    return ResponseEntity.status(HttpStatus.CREATED).body(savedGenre);
-}
+    @PostMapping
+    public ResponseEntity<GenreDTO> createGenre(@RequestBody Genre genre) {
+        Genre savedGenre = genreRepository.save(genre);
+        return ResponseEntity.status(HttpStatus.CREATED).body(convertToDTO(savedGenre));
+    }
 
-@PutMapping("/{id}")
-public ResponseEntity<Genre> updatedGenre(@PathVariable Long id,@RequestBody Genre genreDetails){
- Genre genre = genreRepository.findById(id).orElse(null);
- if (genre == null){
-     return ResponseEntity.notFound().build();
- }
- genre.setName(genreDetails.getName());
+    @PutMapping("/{id}")
+    public ResponseEntity<GenreDTO> updatedGenre(@PathVariable Long id, @RequestBody Genre genreDetails) {
+        Genre genre = genreRepository.findById(id).orElse(null);
+        if (genre == null) {
+            return ResponseEntity.notFound().build();
+        }
+        genre.setName(genreDetails.getName());
 
- Genre updatedGenre = genreRepository.save(genre);
- return ResponseEntity.ok(updatedGenre);
-}
+        Genre updatedGenre = genreRepository.save(genre);
+        return ResponseEntity.ok(convertToDTO(updatedGenre));
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteGenre(@PathVariable Long id) {
@@ -67,5 +70,13 @@ public ResponseEntity<Genre> updatedGenre(@PathVariable Long id,@RequestBody Gen
         return ResponseEntity.noContent().build();
     }
 
-
+    private GenreDTO convertToDTO(Genre genre) {
+        GenreDTO genreDTO = new GenreDTO();
+        genreDTO.setId(genre.getId());
+        genreDTO.setName(genre.getName());
+        if (genre.getMovies() != null) {
+            genreDTO.setMovieIds(genre.getMovies().stream().map(Movie::getId).collect(Collectors.toList()));
+        }
+        return genreDTO;
+    }
 }

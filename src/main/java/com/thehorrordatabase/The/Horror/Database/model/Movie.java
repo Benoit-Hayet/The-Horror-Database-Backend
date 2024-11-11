@@ -28,7 +28,7 @@ public class Movie {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 50)
-    private Status status;
+    private EStatus status;
 
     @Column(name = "poster_url", length = 500)
     private String posterUrl;
@@ -50,7 +50,7 @@ public class Movie {
     public Movie() {
     }
 
-    public Movie(String title, String country, Integer releaseYear, String director, String synopsis, Status status, String posterUrl, Integer createdBy, LocalDateTime createdAt, List<Genre> genres) {
+    public Movie(String title, String country, Integer releaseYear, String director, String synopsis, EStatus status, String posterUrl, Integer createdBy, LocalDateTime createdAt, List<Genre> genres) {
         this.title = title;
         this.country = country;
         this.releaseYear = releaseYear;
@@ -113,11 +113,11 @@ public class Movie {
         this.synopsis = synopsis;
     }
 
-    public Status getStatus() {
+    public EStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(EStatus status) {
         this.status = status;
     }
 
@@ -153,10 +153,6 @@ public class Movie {
         this.genres = genres;
     }
 
-    // Enum for Status
-    public enum Status {
-        REFUSED,
-        PENDING,
-        APPROVED
-    }
+
+
 }

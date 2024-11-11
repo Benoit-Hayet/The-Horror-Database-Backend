@@ -20,17 +20,26 @@ public class Genre {
         return id;
     }
 
-    public void setGenre_Id(Long genre_Id) {
-        this.id = genre_Id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String genre) {
+    public void setName(String name) {
         this.name = name;
     }
+
+    public List<Movie> getMovies() {
+        return movies;
+    }
+
+    public void setMovies(List<Movie> movies) {
+        this.movies = movies;
+    }
+
 }
 
 
