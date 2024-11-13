@@ -47,6 +47,11 @@ public class Movie {
     )
     private List<Genre> genres;
 
+    @OneToMany(mappedBy = "movie")
+    private List<UserReview> userReviews;
+
+
+
     public Movie() {
     }
 
@@ -153,6 +158,11 @@ public class Movie {
         this.genres = genres;
     }
 
+    public List<UserReview> getUserReview() {
+        return userReviews;
+    }
 
-
+    public void setUserReview(List<UserReview> userReview) {
+        this.userReviews = userReview;
+    }
 }

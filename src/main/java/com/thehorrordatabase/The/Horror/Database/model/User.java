@@ -3,6 +3,7 @@ package com.thehorrordatabase.The.Horror.Database.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 public class User {
@@ -37,6 +38,9 @@ public class User {
 
     @Column(name = "created_at")
     private LocalDate createdAt;
+
+    @OneToMany(mappedBy = "user")
+    private List<UserReview> userReviews;
 
     public User() {
     }
@@ -133,5 +137,13 @@ public class User {
 
     public void setCreatedAt(LocalDate createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<UserReview> getUserReviews() {
+        return userReviews;
+    }
+
+    public void setUserReviews(List<UserReview> userReviews) {
+        this.userReviews = userReviews;
     }
 }

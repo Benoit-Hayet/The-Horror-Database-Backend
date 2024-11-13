@@ -18,6 +18,9 @@ public class MovieDTO {
     private LocalDateTime createdAt;
   private List<String> genreName;
 
+  private List<UserDTO> users;
+  private List <UserReviewDTO> userReviews;
+
     // Getters and Setters
 
     public Long getId() {
@@ -106,5 +109,21 @@ public class MovieDTO {
 
     public void setGenreName(List<String> genreName) {
         this.genreName = genreName;
+    }
+
+    public List<UserDTO> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<UserDTO> users) {
+        this.users = users;
+    }
+
+    public List<UserReviewDTO> getUserReview() {
+        return userReviews;
+    }
+
+    public void setUserReview(List<UserReviewDTO> userReview) {
+        this.userReviews = userReview;
     }
 }

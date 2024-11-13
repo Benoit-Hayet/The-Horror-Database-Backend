@@ -1,8 +1,10 @@
 package com.thehorrordatabase.The.Horror.Database.controller;
 
 import com.thehorrordatabase.The.Horror.Database.dto.MovieDTO;
+import com.thehorrordatabase.The.Horror.Database.dto.UserReviewDTO;
 import com.thehorrordatabase.The.Horror.Database.model.Genre;
 import com.thehorrordatabase.The.Horror.Database.model.Movie;
+import com.thehorrordatabase.The.Horror.Database.model.UserReview;
 import com.thehorrordatabase.The.Horror.Database.repository.GenreRepository;
 import com.thehorrordatabase.The.Horror.Database.repository.MovieRepository;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/movies")
 public class MovieController {
 
@@ -167,8 +170,24 @@ return ResponseEntity.ok(convertToDTO(movie));
         if (movie.getGenres() != null) {
             movieDTO.setGenreName(movie.getGenres().stream().map(Genre::getName).collect(Collectors.toList()));
         }
+        if (movie.getUserReview() != null) {
+            movieDTO.setUserReview(movie.getUserReview().stream().map(this::convertToUserReviewDTO).collect(Collectors.toList()));
+        }
+
         return movieDTO;
     }
 
+    private UserReviewDTO convertToUserReviewDTO(UserReview review) {
+        UserReviewDTO reviewDTO = new UserReviewDTO();
+        reviewDTO.setId(review.getId());
+        reviewDTO.setReview(review.getReview());
+        reviewDTO.setRating(review.getRating());
+        reviewDTO.setCreatedAt(review.getCreatedAt());
+        reviewDTO.setUserId(review.getUser().getId());
+        reviewDTO.setUsername(review.getUser().getUsername()); // Récupération du username
+        reviewDTO.setAvatarUrl(review.getUser().getAvatarUrl()); // Récupération de l'avatarUrl
+        return reviewDTO;
     }
+
+}
 
