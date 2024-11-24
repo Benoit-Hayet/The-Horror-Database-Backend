@@ -6,6 +6,7 @@ import com.thehorrordatabase.The.Horror.Database.repository.UserReviewRepository
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,23 +34,21 @@ public class UserReviewController {
 
     @GetMapping("/movie-review/{id}")
     public ResponseEntity<List<UserReviewDTO>> getUserReviewsByMovieId(@PathVariable Long id) {
-        // Récupère les avis associés au film via son ID
         List<UserReview> userReviews = userReviewRepository.findByMovieId(id);
-
-        // Vérifie s'il y a des avis
         if (userReviews.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-
-        // Convertit les avis en DTOs
         List<UserReviewDTO> userReviewDTOS = userReviews.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
-
-        // Retourne la réponse avec les DTOs
         return ResponseEntity.ok(userReviewDTOS);
     }
 
+@PostMapping
+public ResponseEntity<UserReviewDTO> createUserReview(@RequestBody UserReview userReview) {
+   UserReview savedUserReview =userReviewRepository.save(userReview);
+   return ResponseEntity.status(201).body(convertToDTO(savedUserReview));
+}
 
 
     private UserReviewDTO convertToDTO(UserReview review) {
