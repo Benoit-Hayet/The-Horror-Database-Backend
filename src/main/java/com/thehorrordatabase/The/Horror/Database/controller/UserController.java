@@ -56,7 +56,7 @@ public class UserController {
         user.setPassword(userDetails.getPassword());
         user.setUsername(userDetails.getUsername());
         user.setAvatarUrl(userDetails.getAvatarUrl());
-        user.setRole(userDetails.getRole());
+        user.setRoles(userDetails.getRoles());
         user.setBirthdate(userDetails.getBirthdate());
         user.setCreatedAt(userDetails.getCreatedAt());
 
@@ -83,7 +83,7 @@ public class UserController {
         userDTO.setPassword(user.getPassword());
         userDTO.setUsername(user.getUsername());
         userDTO.setAvatarUrl(user.getAvatarUrl());
-        userDTO.setRole(user.getRole());
+        userDTO.setRole(user.getRoles());
         userDTO.setBirthdate(user.getBirthdate());
         userDTO.setCreatedAt(user.getCreatedAt());
         return userDTO;

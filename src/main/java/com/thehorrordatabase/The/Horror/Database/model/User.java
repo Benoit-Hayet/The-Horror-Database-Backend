@@ -3,7 +3,9 @@ package com.thehorrordatabase.The.Horror.Database.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class User {
@@ -15,23 +17,24 @@ public class User {
     @Column(name = "first_name", length = 50)
     private String firstName;
 
-    @Column(name = "last_name", nullable = false, length = 50)
+    @Column(name = "last_name", nullable = true, length = 50)
     private String lastName;
 
     @Column(name = "email", nullable = false, length = 255)
     private String email;
 
-    @Column(name = "password", nullable = false, length = 50)
+    @Column(name = "password", nullable = false, length = 255)
     private String password;
 
-    @Column(name = "username", nullable = false, length = 50)
+    @Column(name = "username", nullable = true, length = 50)
     private String username;
 
-    @Column(name = "avatar_url", nullable = false, length = 500)
+    @Column(name = "avatar_url", nullable = true, length = 500)
     private String avatarUrl;
 
-    @Column(name = "role", nullable = false, length = 50)
-    private String role;
+
+    @Column(name = "roles", nullable = true, length = 50)
+    private String roles;
 
     @Column(name = "birthdate")
     private LocalDate birthdate;
@@ -52,7 +55,7 @@ public class User {
         this.password = password;
         this.username = username;
         this.avatarUrl = avatarUrl;
-        this.role = role;
+        this.roles = roles;
         this.birthdate = birthdate;
         this.createdAt = createdAt;
     }
@@ -115,12 +118,12 @@ public class User {
         this.avatarUrl = avatarUrl;
     }
 
-    public String getRole() {
-        return role;
+    public String getRoles() {
+        return roles;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoles(String role) {
+        this.roles = roles;
     }
 
     public LocalDate getBirthdate() {
