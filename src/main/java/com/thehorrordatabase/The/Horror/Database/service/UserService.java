@@ -1,5 +1,6 @@
 package com.thehorrordatabase.The.Horror.Database.service;
 
+
 import com.thehorrordatabase.The.Horror.Database.model.User;
 import com.thehorrordatabase.The.Horror.Database.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,6 +12,7 @@ import java.util.Set;
 public class UserService {
 
     private final UserRepository userRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
@@ -26,8 +28,7 @@ public class UserService {
         User user = new User();
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password)); // Encodage du mot de passe avec BCrypt
-        user.setRoles(user.getRoles());
+        user.setRoles(roles);
         return userRepository.save(user);
     }
 }
-

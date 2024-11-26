@@ -1,6 +1,7 @@
 package com.thehorrordatabase.The.Horror.Database.dto;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 public class UserDTO {
 
@@ -11,7 +12,7 @@ public class UserDTO {
     private String password;
     private String username;
     private String avatarUrl;
-    private String role;
+    private Set<String> role;
     private LocalDate birthdate;
     private LocalDate createdAt;
 
@@ -71,11 +72,11 @@ public class UserDTO {
         this.avatarUrl = avatarUrl;
     }
 
-    public String getRole() {
+    public Set<String> getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Set<String> role) {
         this.role = role;
     }
 

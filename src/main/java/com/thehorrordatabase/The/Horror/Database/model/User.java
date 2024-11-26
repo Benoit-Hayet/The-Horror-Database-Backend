@@ -2,13 +2,19 @@ package com.thehorrordatabase.The.Horror.Database.model;
 
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,8 +39,8 @@ public class User {
     private String avatarUrl;
 
 
-    @Column(name = "roles", nullable = true, length = 50)
-    private String roles;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> roles = new HashSet<>();
 
     @Column(name = "birthdate")
     private LocalDate birthdate;
@@ -48,14 +54,13 @@ public class User {
     public User() {
     }
 
-    public User(String firstName, String lastName, String email, String password, String username, String avatarUrl, String role, LocalDate birthdate, LocalDate createdAt) {
+    public User(String firstName, String lastName, String email, String password, String username, String avatarUrl, LocalDate birthdate, LocalDate createdAt) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.username = username;
         this.avatarUrl = avatarUrl;
-        this.roles = roles;
         this.birthdate = birthdate;
         this.createdAt = createdAt;
     }
@@ -102,9 +107,9 @@ public class User {
         this.password = password;
     }
 
-    public String getUsername() {
+   /* public String getUsername() {
         return username;
-    }
+    }*/
 
     public void setUsername(String username) {
         this.username = username;
@@ -118,11 +123,11 @@ public class User {
         this.avatarUrl = avatarUrl;
     }
 
-    public String getRoles() {
+    public Set<String> getRoles() {
         return roles;
     }
 
-    public void setRoles(String role) {
+    public void setRoles(Set<String> roles) {
         this.roles = roles;
     }
 
@@ -148,5 +153,38 @@ public class User {
 
     public void setUserReviews(List<UserReview> userReviews) {
         this.userReviews = userReviews;
+    }
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }
