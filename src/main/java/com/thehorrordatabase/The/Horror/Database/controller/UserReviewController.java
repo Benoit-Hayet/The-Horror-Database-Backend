@@ -58,7 +58,7 @@ public ResponseEntity<UserReviewDTO> createUserReview(@RequestBody UserReview us
     reviewDTO.setReview(review.getReview());
     reviewDTO.setRating(review.getRating());
     reviewDTO.setCreatedAt(review.getCreatedAt());
-    reviewDTO.setUserId(review.getUser().getId());
+    reviewDTO.setUserId(review.getUser() != null ? review.getUser().getId() : null);
     reviewDTO.setUsername(review.getUser().getUsername());
     reviewDTO.setAvatarUrl(review.getUser().getAvatarUrl());
     return reviewDTO;
