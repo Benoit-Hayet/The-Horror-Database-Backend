@@ -52,16 +52,25 @@ public ResponseEntity<UserReviewDTO> createUserReview(@RequestBody UserReview us
 
 
     private UserReviewDTO convertToDTO(UserReview review) {
-    UserReviewDTO reviewDTO = new UserReviewDTO();
-    reviewDTO.setId(review.getId());
-    reviewDTO.setMovieId(review.getMovie().getId());
-    reviewDTO.setReview(review.getReview());
-    reviewDTO.setRating(review.getRating());
-    reviewDTO.setCreatedAt(review.getCreatedAt());
-    reviewDTO.setUserId(review.getUser() != null ? review.getUser().getId() : null);
-    reviewDTO.setUsername(review.getUser().getUsername());
-    reviewDTO.setAvatarUrl(review.getUser().getAvatarUrl());
-    return reviewDTO;
+        UserReviewDTO reviewDTO = new UserReviewDTO();
+        reviewDTO.setId(review.getId());
+        reviewDTO.setMovieId(review.getMovie().getId());
+        reviewDTO.setReview(review.getReview());
+        reviewDTO.setRating(review.getRating());
+        reviewDTO.setCreatedAt(review.getCreatedAt());
 
-}
+        // Vérification de la nullité de l'utilisateur
+        if (review.getUser() != null) {
+            reviewDTO.setUserId(review.getUser().getId());
+            reviewDTO.setUsername(review.getUser().getUsername());
+            reviewDTO.setAvatarUrl(review.getUser().getAvatarUrl());
+        } else {
+            reviewDTO.setUserId(null);
+            reviewDTO.setUsername(null);
+            reviewDTO.setAvatarUrl(null);
+        }
+
+        return reviewDTO;
+    }
+
 }
