@@ -35,15 +35,17 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll() // Accessible à tous
+
                         .requestMatchers("/admin/**").hasRole("ADMIN") // Accessible uniquement aux administrateurs
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") // Accessible aux utilisateurs et administrateurs
+
                         .requestMatchers(HttpMethod.GET, "/movies/**").permitAll() // Autoriser tous les utilisateurs à lire les articles
-                        .requestMatchers(HttpMethod.POST, "/movies/**").hasRole("ADMIN") // Seuls les admins peuvent créer des articles
-                        .requestMatchers(HttpMethod.PUT, "/movies/**").hasRole("ADMIN") // Seuls les admins peuvent mettre à jour des articles
+                        .requestMatchers(HttpMethod.GET, "/movie-review/**").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/movies/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/movies/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/movies/**").hasRole("ADMIN")
-
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-
                         .anyRequest().authenticated() //
                 )
                 .userDetailsService(customUserDetailsService)
