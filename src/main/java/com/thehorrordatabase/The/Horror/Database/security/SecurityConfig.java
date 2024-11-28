@@ -41,6 +41,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/movies/**").hasRole("ADMIN") // Seuls les admins peuvent créer des articles
                         .requestMatchers(HttpMethod.PUT, "/movies/**").hasRole("ADMIN") // Seuls les admins peuvent mettre à jour des articles
                         .requestMatchers(HttpMethod.DELETE, "/movies/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+
                         .anyRequest().authenticated() //
                 )
                 .userDetailsService(customUserDetailsService)
