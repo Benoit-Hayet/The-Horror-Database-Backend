@@ -1,10 +1,7 @@
 package com.thehorrordatabase.The.Horror.Database.controller;
 
 import com.thehorrordatabase.The.Horror.Database.dto.MovieDTO;
-import com.thehorrordatabase.The.Horror.Database.dto.UserReviewDTO;
-import com.thehorrordatabase.The.Horror.Database.model.Genre;
 import com.thehorrordatabase.The.Horror.Database.model.Movie;
-import com.thehorrordatabase.The.Horror.Database.model.UserReview;
 import com.thehorrordatabase.The.Horror.Database.repository.GenreRepository;
 import com.thehorrordatabase.The.Horror.Database.repository.MovieRepository;
 import com.thehorrordatabase.The.Horror.Database.service.MovieService;
@@ -13,11 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")

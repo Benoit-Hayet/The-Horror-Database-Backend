@@ -15,11 +15,12 @@ public class UserReview {
     @JoinColumn(name = "movie_id")
     private Movie movie;
 
- @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
- @Column(nullable = false,length = 1000)
+
+    @Column(nullable = false,length = 1000)
     private String review;
 
  @Column(nullable = false)

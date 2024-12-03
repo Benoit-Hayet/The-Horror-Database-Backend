@@ -2,11 +2,19 @@ package com.thehorrordatabase.The.Horror.Database.model;
 
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,23 +23,24 @@ public class User {
     @Column(name = "first_name", length = 50)
     private String firstName;
 
-    @Column(name = "last_name", nullable = false, length = 50)
+    @Column(name = "last_name", nullable = true, length = 50)
     private String lastName;
 
     @Column(name = "email", nullable = false, length = 255)
     private String email;
 
-    @Column(name = "password", nullable = false, length = 50)
+    @Column(name = "password", nullable = false, length = 255)
     private String password;
 
-    @Column(name = "username", nullable = false, length = 50)
+    @Column(name = "username", nullable = true, length = 50)
     private String username;
 
-    @Column(name = "avatar_url", nullable = false, length = 500)
+    @Column(name = "avatar_url", nullable = true, length = 500)
     private String avatarUrl;
 
-    @Column(name = "role", nullable = false, length = 50)
-    private String role;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> roles = new HashSet<>();
 
     @Column(name = "birthdate")
     private LocalDate birthdate;
@@ -45,14 +54,13 @@ public class User {
     public User() {
     }
 
-    public User(String firstName, String lastName, String email, String password, String username, String avatarUrl, String role, LocalDate birthdate, LocalDate createdAt) {
+    public User(String firstName, String lastName, String email, String password, String username, String avatarUrl, LocalDate birthdate, LocalDate createdAt) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.username = username;
         this.avatarUrl = avatarUrl;
-        this.role = role;
         this.birthdate = birthdate;
         this.createdAt = createdAt;
     }
@@ -99,9 +107,9 @@ public class User {
         this.password = password;
     }
 
-    public String getUsername() {
+   /* public String getUsername() {
         return username;
-    }
+    }*/
 
     public void setUsername(String username) {
         this.username = username;
@@ -115,12 +123,12 @@ public class User {
         this.avatarUrl = avatarUrl;
     }
 
-    public String getRole() {
-        return role;
+    public Set<String> getRoles() {
+        return roles;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
 
     public LocalDate getBirthdate() {
@@ -145,5 +153,38 @@ public class User {
 
     public void setUserReviews(List<UserReview> userReviews) {
         this.userReviews = userReviews;
+    }
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }
