@@ -40,7 +40,8 @@ public class SecurityConfig {
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") // Accessible aux utilisateurs et administrateurs
 
                         .requestMatchers(HttpMethod.GET, "/movies/**").permitAll() // Autoriser tous les utilisateurs à lire les articles
-                        .requestMatchers(HttpMethod.GET, "/movie-review/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/reviews/movie-review/**").permitAll()
+
 
                         .requestMatchers(HttpMethod.POST, "/movies/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/movies/**").hasRole("ADMIN")

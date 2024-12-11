@@ -3,13 +3,17 @@ package com.thehorrordatabase.The.Horror.Database.controller;
 import com.thehorrordatabase.The.Horror.Database.dto.UserDTO;
 import com.thehorrordatabase.The.Horror.Database.model.User;
 import com.thehorrordatabase.The.Horror.Database.repository.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/users")
 public class UserController {
 
@@ -37,6 +41,23 @@ public class UserController {
         }
         return ResponseEntity.ok(convertToDTO(user));
     }
+
+    @GetMapping("/profile")
+    public ResponseEntity<UserDTO> getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(convertToDTO(user));
+    }
+
 
     @PostMapping
     public ResponseEntity<UserDTO> createUser(@RequestBody User user) {
