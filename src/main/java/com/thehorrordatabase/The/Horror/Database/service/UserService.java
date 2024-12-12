@@ -3,6 +3,7 @@ package com.thehorrordatabase.The.Horror.Database.service;
 
 import com.thehorrordatabase.The.Horror.Database.model.User;
 import com.thehorrordatabase.The.Horror.Database.repository.UserRepository;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,11 @@ public class UserService {
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 
     public User registerUser(String email, String password, Set<String> roles, String lastname, String firstname, LocalDate birthdate) {
