@@ -1,5 +1,6 @@
 package com.thehorrordatabase.The.Horror.Database.controller;
 
+import com.thehorrordatabase.The.Horror.Database.dto.MovieDTO;
 import com.thehorrordatabase.The.Horror.Database.dto.UserDTO;
 import com.thehorrordatabase.The.Horror.Database.dto.UserLoginDTO;
 import com.thehorrordatabase.The.Horror.Database.dto.UserRegistrationDTO;
@@ -30,22 +31,30 @@ public class AuthController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/profile")
-    //@PreAuthorize("#email == authentication.principal.username")
-    public ResponseEntity<UserDTO> getProfile(@RequestParam String email) {
-        /*Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    @GetMapping("/profile/{sub}")
+    public ResponseEntity<UserDTO> getProfile(@PathVariable String sub) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }*/
+        }
 
+        String currentUsername = authentication.getName(); // Nom d'utilisateur authentifié
+        if (!sub.equals(currentUsername)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // Accès interdit si ce n'est pas le profil de l'utilisateur authentifié
+        }
 
-        User user = userRepository.findByEmail(email).orElse(null);
-
+        User user = userRepository.findByUsername(currentUsername).orElse(null);
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
+
         return ResponseEntity.ok(convertToDTO(user));
     }
+
+
+
+
+
 
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody UserRegistrationDTO userRegistrationDTO) {
