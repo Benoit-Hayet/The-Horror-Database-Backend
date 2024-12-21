@@ -50,12 +50,6 @@ public class MovieController {
         return ResponseEntity.ok(movie);
     }
 
-
-   /* @PostMapping
-    public ResponseEntity<MovieDTO> createMovie(@RequestBody Movie movie) {
-       MovieDTO savedMovie = movieService.createMovie(movie);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedMovie);
-    }*/
    @PostMapping
    public ResponseEntity<MovieDTO> createMovie(@RequestBody Movie movie, @RequestHeader("Authorization") String authorizationHeader) {
        String token = authorizationHeader.replace("Bearer ", "");

@@ -32,31 +32,36 @@ public class AuthController {
     }
 
     @GetMapping("/profile/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<UserDTO> getProfile(@PathVariable Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         // Vérifier si l'utilisateur est authentifié
-        if (authentication == null || !authentication.isAuthenticated()) {
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal() == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Pas d'utilisateur authentifié
         }
 
         // Récupérer l'id de l'utilisateur authentifié depuis le token JWT
-        String currentUserId = (String) authentication.getPrincipal(); // Ou utilisez un autre mécanisme pour extraire l'id
+        String currentUserIdStr = authentication.getPrincipal().toString();
+        Long currentUserId;
+
+        try {
+            currentUserId = Long.parseLong(currentUserIdStr); // Convertir en Long
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Erreur dans le token
+        }
 
         // Si l'id dans l'URL ne correspond pas à celui de l'utilisateur authentifié, refuser l'accès
         if (!id.equals(currentUserId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // Accès interdit si ce n'est pas le bon utilisateur
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // Accès interdit
         }
 
         // Trouver l'utilisateur avec l'id
-        User user = userRepository.findById(id).orElse(null); // Trouver l'utilisateur par son id
-        if (user == null) {
-            return ResponseEntity.notFound().build(); // Utilisateur non trouvé
-        }
-
-        // Retourner les données de l'utilisateur sous forme de DTO
-        return ResponseEntity.ok(convertToDTO(user));
+        return userRepository.findById(id)
+                .map(user -> ResponseEntity.ok(convertToDTO(user))) // Retourner les données sous forme de DTO
+                .orElseGet(() -> ResponseEntity.notFound().build()); // Utilisateur non trouvé
     }
+
 
 
     @PostMapping("/register")
