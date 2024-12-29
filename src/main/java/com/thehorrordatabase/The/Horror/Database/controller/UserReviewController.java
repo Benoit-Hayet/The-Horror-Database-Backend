@@ -57,6 +57,18 @@ public class UserReviewController {
         return ResponseEntity.ok(userReviewDTOS);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<List<UserReviewDTO>> getUserReviewsByUserId(@PathVariable Long id) {
+        List<UserReview> userReviews = userReviewRepository.findReviewByUserId(id);
+        if (userReviews.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        List<UserReviewDTO> userReviewDTOS = userReviews.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(userReviewDTOS);
+    }
+
     @PostMapping
     public ResponseEntity<UserReviewDTO> createUserReview(
             @RequestBody UserReview userReview,
@@ -101,6 +113,11 @@ public class UserReviewController {
         reviewDTO.setReview(review.getReview());
         reviewDTO.setRating(review.getRating());
         reviewDTO.setCreatedAt(review.getCreatedAt());
+
+        if (review.getMovie() == null) {
+            throw new IllegalStateException("The movie associated with this review is null.");
+        }
+
 
         // Vérification de la nullité de l'utilisateur
         if (review.getUser() != null) {
