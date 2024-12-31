@@ -42,6 +42,13 @@ public class MovieService {
         return movieMapper.convertToDTO((movie));
     }
 
+    public List<MovieDTO> getMoviesByUserId(Long userId) {
+        List<Movie> movies = movieRepository.findByCreatedBy(userId); // Assurez-vous d'avoir cette méthode dans votre repository
+        return movies.stream()
+                .map(movieMapper::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
 
 
     public MovieDTO createMovie(Movie movie) {

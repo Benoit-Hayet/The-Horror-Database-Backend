@@ -51,7 +51,6 @@ public class Movie {
     private List<UserReview> userReviews;
 
 
-
     public Movie() {
     }
 

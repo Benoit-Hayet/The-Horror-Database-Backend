@@ -1,8 +1,16 @@
 package com.thehorrordatabase.The.Horror.Database.controller;
 
+import com.thehorrordatabase.The.Horror.Database.dto.MovieDTO;
 import com.thehorrordatabase.The.Horror.Database.dto.UserReviewDTO;
+import com.thehorrordatabase.The.Horror.Database.model.Movie;
+import com.thehorrordatabase.The.Horror.Database.model.User;
 import com.thehorrordatabase.The.Horror.Database.model.UserReview;
+import com.thehorrordatabase.The.Horror.Database.repository.MovieRepository;
+import com.thehorrordatabase.The.Horror.Database.repository.UserRepository;
 import com.thehorrordatabase.The.Horror.Database.repository.UserReviewRepository;
+import com.thehorrordatabase.The.Horror.Database.service.JwtService;
+import io.jsonwebtoken.Claims;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,9 +23,15 @@ import java.util.stream.Collectors;
 public class UserReviewController {
 
     private final UserReviewRepository userReviewRepository;
+    private final JwtService jwtService;
+    private final UserRepository userRepository;
+    private final MovieRepository movieRepository;
 
-    public UserReviewController (UserReviewRepository userReviewRepository) {
+    public UserReviewController (UserReviewRepository userReviewRepository, JwtService jwtService, UserRepository userRepository, MovieRepository movieRepository) {
     this.userReviewRepository = userReviewRepository;
+        this.jwtService = jwtService;
+        this.userRepository = userRepository;
+        this.movieRepository = movieRepository;
 
     }
 
@@ -43,11 +57,54 @@ public class UserReviewController {
         return ResponseEntity.ok(userReviewDTOS);
     }
 
-@PostMapping
-public ResponseEntity<UserReviewDTO> createUserReview(@RequestBody UserReview userReview) {
-   UserReview savedUserReview =userReviewRepository.save(userReview);
-   return ResponseEntity.status(201).body(convertToDTO(savedUserReview));
-}
+    @GetMapping("/{id}")
+    public ResponseEntity<List<UserReviewDTO>> getUserReviewsByUserId(@PathVariable Long id) {
+        List<UserReview> userReviews = userReviewRepository.findReviewByUserId(id);
+        if (userReviews.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        List<UserReviewDTO> userReviewDTOS = userReviews.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(userReviewDTOS);
+    }
+
+    @PostMapping
+    public ResponseEntity<UserReviewDTO> createUserReview(
+            @RequestBody UserReview userReview,
+            @RequestHeader("Authorization") String authorizationHeader) {
+        // Extraire le token JWT de l'en-tête
+        String token = authorizationHeader.replace("Bearer ", "");
+        Claims claims = jwtService.extractClaims(token);
+
+        // Récupérer l'ID de l'utilisateur depuis les claims
+        Long userId = claims.get("userId", Integer.class).longValue();
+
+        // Charger l'utilisateur en base de données
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID : " + userId));
+
+        // Récupérer l'objet `Movie` à partir de l'ID dans l'objet `UserReview`
+        if (userReview.getMovie() == null || userReview.getMovie().getId() == null) {
+            throw new RuntimeException("L'ID du film est requis pour créer un avis.");
+        }
+
+        // Remplace cette ligne par l'initialisation de `MovieRepository` (voir étape 2)
+        Movie movie = movieRepository.findById(userReview.getMovie().getId())
+                .orElseThrow(() -> new RuntimeException("Film non trouvé avec l'ID : " + userReview.getMovie().getId()));
+
+        // Associer le film et l'utilisateur à l'avis
+        userReview.setMovie(movie);
+        userReview.setUser(user);
+
+        // Sauvegarder l'avis
+        UserReview savedUserReview = userReviewRepository.save(userReview);
+
+        // Convertir l'avis en DTO et retourner la réponse
+        return ResponseEntity.status(201).body(convertToDTO(savedUserReview));
+    }
+
+
 
 
     private UserReviewDTO convertToDTO(UserReview review) {
@@ -57,6 +114,28 @@ public ResponseEntity<UserReviewDTO> createUserReview(@RequestBody UserReview us
         reviewDTO.setReview(review.getReview());
         reviewDTO.setRating(review.getRating());
         reviewDTO.setCreatedAt(review.getCreatedAt());
+
+        // Vérification que le film associé n'est pas nul
+        if (review.getMovie() == null) {
+            throw new IllegalStateException("The movie associated with this review is null.");
+        }
+
+        // Mapper les informations du film dans MovieDTO
+        Movie movie = review.getMovie();
+        MovieDTO movieDTO = new MovieDTO();
+        movieDTO.setId(movie.getId());
+        movieDTO.setTitle(movie.getTitle());
+        movieDTO.setCountry(movie.getCountry());
+        movieDTO.setReleaseYear(movie.getReleaseYear());
+        movieDTO.setDirector(movie.getDirector());
+        movieDTO.setSynopsis(movie.getSynopsis());
+        movieDTO.setStatus(movie.getStatus());
+        movieDTO.setPosterUrl(movie.getPosterUrl());
+        movieDTO.setCreatedBy(movie.getCreatedBy());
+        movieDTO.setCreatedAt(movie.getCreatedAt());
+
+        // Ajouter les informations du film dans UserReviewDTO
+        reviewDTO.setMovieDTOS(List.of(movieDTO)); // ou utilisez un seul MovieDTO si souhaité
 
         // Vérification de la nullité de l'utilisateur
         if (review.getUser() != null) {
@@ -71,5 +150,6 @@ public ResponseEntity<UserReviewDTO> createUserReview(@RequestBody UserReview us
 
         return reviewDTO;
     }
+
 
 }

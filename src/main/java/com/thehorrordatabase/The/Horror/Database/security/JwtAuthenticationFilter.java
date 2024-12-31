@@ -5,6 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +22,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
+
     public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
@@ -32,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String requestPath = request.getServletPath();
 
         // Exclure les endpoints publics du traitement JWT
-        if (requestPath.startsWith("/auth/")) {
+        if (requestPath.equals("/auth/login") || requestPath.equals("/auth/register")) {
             filterChain.doFilter(request, response);
             return;
         }
