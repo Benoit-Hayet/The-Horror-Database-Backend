@@ -106,6 +106,7 @@ public class UserReviewController {
 
 
 
+
     private UserReviewDTO convertToDTO(UserReview review) {
         UserReviewDTO reviewDTO = new UserReviewDTO();
         reviewDTO.setId(review.getId());
@@ -114,10 +115,27 @@ public class UserReviewController {
         reviewDTO.setRating(review.getRating());
         reviewDTO.setCreatedAt(review.getCreatedAt());
 
+        // Vérification que le film associé n'est pas nul
         if (review.getMovie() == null) {
             throw new IllegalStateException("The movie associated with this review is null.");
         }
 
+        // Mapper les informations du film dans MovieDTO
+        Movie movie = review.getMovie();
+        MovieDTO movieDTO = new MovieDTO();
+        movieDTO.setId(movie.getId());
+        movieDTO.setTitle(movie.getTitle());
+        movieDTO.setCountry(movie.getCountry());
+        movieDTO.setReleaseYear(movie.getReleaseYear());
+        movieDTO.setDirector(movie.getDirector());
+        movieDTO.setSynopsis(movie.getSynopsis());
+        movieDTO.setStatus(movie.getStatus());
+        movieDTO.setPosterUrl(movie.getPosterUrl());
+        movieDTO.setCreatedBy(movie.getCreatedBy());
+        movieDTO.setCreatedAt(movie.getCreatedAt());
+
+        // Ajouter les informations du film dans UserReviewDTO
+        reviewDTO.setMovieDTOS(List.of(movieDTO)); // ou utilisez un seul MovieDTO si souhaité
 
         // Vérification de la nullité de l'utilisateur
         if (review.getUser() != null) {
@@ -132,5 +150,6 @@ public class UserReviewController {
 
         return reviewDTO;
     }
+
 
 }

@@ -50,7 +50,26 @@ public class MovieController {
         return ResponseEntity.ok(movie);
     }
 
-   @PostMapping
+    @GetMapping("user/{userId}")
+    public ResponseEntity<List<MovieDTO>> getMoviesByUser(
+            @PathVariable Long userId,
+            @RequestHeader("Authorization") String authorizationHeader) {
+
+        String token = authorizationHeader.replace("Bearer ", "");
+
+        Claims claims = jwtService.extractClaims(token);
+        Long tokenUserId = claims.get("userId", Long.class);
+
+        if (!userId.equals(tokenUserId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        List<MovieDTO> movieDTOs = movieService.getMoviesByUserId(userId);
+        return ResponseEntity.ok(movieDTOs);
+    }
+
+
+    @PostMapping
    public ResponseEntity<MovieDTO> createMovie(@RequestBody Movie movie, @RequestHeader("Authorization") String authorizationHeader) {
        String token = authorizationHeader.replace("Bearer ", "");
        Claims claims = jwtService.extractClaims(token);
