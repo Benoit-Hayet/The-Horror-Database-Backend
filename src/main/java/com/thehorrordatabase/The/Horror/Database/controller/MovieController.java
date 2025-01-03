@@ -73,8 +73,8 @@ public class MovieController {
    public ResponseEntity<MovieDTO> createMovie(@RequestBody Movie movie, @RequestHeader("Authorization") String authorizationHeader) {
        String token = authorizationHeader.replace("Bearer ", "");
        Claims claims = jwtService.extractClaims(token);
-       Integer userId = claims.get("userId", Integer.class).intValue(); // Utilisation correcte du type Long
-       movie.setCreatedBy(userId); // Utilisation de userId dans la méthode
+       Integer userId = claims.get("userId", Integer.class).intValue();
+       movie.setCreatedBy(userId);
        MovieDTO savedMovie = movieService.createMovie(movie);
        return ResponseEntity.status(HttpStatus.CREATED).body(savedMovie);
    }

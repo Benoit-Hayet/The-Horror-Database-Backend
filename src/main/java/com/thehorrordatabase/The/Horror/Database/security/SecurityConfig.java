@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/users/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/favorites/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/movies/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/reviews/movie-review/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/reviews").hasAnyRole("USER", "ADMIN")
