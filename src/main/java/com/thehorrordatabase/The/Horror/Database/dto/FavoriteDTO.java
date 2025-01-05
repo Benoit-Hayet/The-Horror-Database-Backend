@@ -1,6 +1,7 @@
 package com.thehorrordatabase.The.Horror.Database.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class FavoriteDTO {
 
@@ -8,6 +9,8 @@ public class FavoriteDTO {
     private Long movieId;
     private Long userId;
     private LocalDate createdAt;
+
+    private List<MovieDTO> movieDTOS;
 
     public Long getId() {
         return id;
@@ -39,5 +42,13 @@ public class FavoriteDTO {
 
     public void setCreatedAt(LocalDate createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<MovieDTO> getMovieDTOS() {
+        return movieDTOS;
+    }
+
+    public void setMovieDTOS(List<MovieDTO> movieDTOS) {
+        this.movieDTOS = movieDTOS;
     }
 }

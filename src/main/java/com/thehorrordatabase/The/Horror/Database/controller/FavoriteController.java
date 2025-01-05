@@ -128,6 +128,8 @@ public class FavoriteController {
         movieDTO.setCreatedBy(movie.getCreatedBy());
         movieDTO.setCreatedAt(movie.getCreatedAt());
 
+        favoriteDTO.setMovieDTOS(List.of(movieDTO));
+
         return favoriteDTO;
     }
 }
