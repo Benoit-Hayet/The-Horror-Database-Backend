@@ -27,8 +27,8 @@ public class UserReviewController {
     private final UserRepository userRepository;
     private final MovieRepository movieRepository;
 
-    public UserReviewController (UserReviewRepository userReviewRepository, JwtService jwtService, UserRepository userRepository, MovieRepository movieRepository) {
-    this.userReviewRepository = userReviewRepository;
+    public UserReviewController(UserReviewRepository userReviewRepository, JwtService jwtService, UserRepository userRepository, MovieRepository movieRepository) {
+        this.userReviewRepository = userReviewRepository;
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.movieRepository = movieRepository;
@@ -37,11 +37,11 @@ public class UserReviewController {
 
     @GetMapping
     public ResponseEntity<List<UserReviewDTO>> getAllUserReviews() {
-        List < UserReview> userReviews = userReviewRepository.findAll();
+        List<UserReview> userReviews = userReviewRepository.findAll();
         if (userReviews.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        List <UserReviewDTO> userReviewDTOS = userReviews.stream().map(this::convertToDTO).collect(Collectors.toList());
+        List<UserReviewDTO> userReviewDTOS = userReviews.stream().map(this::convertToDTO).collect(Collectors.toList());
         return ResponseEntity.ok(userReviewDTOS);
     }
 
@@ -70,41 +70,90 @@ public class UserReviewController {
     }
 
     @PostMapping
-    public ResponseEntity<UserReviewDTO> createUserReview(
-            @RequestBody UserReview userReview,
-            @RequestHeader("Authorization") String authorizationHeader) {
-        // Extraire le token JWT de l'en-tête
-        String token = authorizationHeader.replace("Bearer ", "");
-        Claims claims = jwtService.extractClaims(token);
+    public ResponseEntity<UserReviewDTO> createUserReview(@RequestBody UserReview userReview, @RequestHeader("Authorization") String authorizationHeader) {
+        // Log l'objet reçu
+        System.out.println("Requête reçue avec UserReview : " + userReview);
 
-        // Récupérer l'ID de l'utilisateur depuis les claims
-        Long userId = claims.get("userId", Integer.class).longValue();
-
-        // Charger l'utilisateur en base de données
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID : " + userId));
-
-        // Récupérer l'objet `Movie` à partir de l'ID dans l'objet `UserReview`
-        if (userReview.getMovie() == null || userReview.getMovie().getId() == null) {
-            throw new RuntimeException("L'ID du film est requis pour créer un avis.");
+        // Vérification du token
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            System.out.println("Erreur : Authorization Header invalide.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
-        // Remplace cette ligne par l'initialisation de `MovieRepository` (voir étape 2)
-        Movie movie = movieRepository.findById(userReview.getMovie().getId())
-                .orElseThrow(() -> new RuntimeException("Film non trouvé avec l'ID : " + userReview.getMovie().getId()));
+        String token = authorizationHeader.replace("Bearer ", "");
 
-        // Associer le film et l'utilisateur à l'avis
-        userReview.setMovie(movie);
+        // Extraction des claims
+        Claims claims;
+        try {
+            claims = jwtService.extractClaims(token);
+        } catch (Exception e) {
+            System.out.println("Erreur : Token JWT invalide.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        // Récupération de l'ID utilisateur
+        Long userId = claims.get("userId", Long.class);
+        System.out.println("ID utilisateur extrait : " + userId);
+
+        User user;
+        try {
+            user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+        } catch (Exception e) {
+            System.out.println("Erreur : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        // Vérification des données de l'avis
+        if (userReview.getRating() < 1 || userReview.getRating() > 5) {
+            System.out.println("Erreur : Note invalide (rating = " + userReview.getRating() + ")");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        // Vérification du film
+        Movie movie;
+        try {
+            movie = movieRepository.findById(userReview.getMovie().getId())
+                    .orElseThrow(() -> new RuntimeException("Film non trouvé"));
+        } catch (Exception e) {
+            System.out.println("Erreur : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        // Associer utilisateur et film
         userReview.setUser(user);
+        userReview.setMovie(movie);
 
-        // Sauvegarder l'avis
-        UserReview savedUserReview = userReviewRepository.save(userReview);
+        // Sauvegarde
+        UserReview savedUserReview;
+        try {
+            savedUserReview = userReviewRepository.save(userReview);
+            System.out.println("Avis sauvegardé avec succès : " + savedUserReview);
+        } catch (Exception e) {
+            System.out.println("Erreur lors de la sauvegarde de l'avis : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
 
-        // Convertir l'avis en DTO et retourner la réponse
-        return ResponseEntity.status(201).body(convertToDTO(savedUserReview));
+        // Conversion en DTO
+        UserReviewDTO userReviewDTO = convertToDTO(savedUserReview);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userReviewDTO);
     }
 
 
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUserReview(@PathVariable Long id) {
+        // Vérifier si l'avis existe
+        UserReview userReview = userReviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Avis non trouvé avec l'ID : " + id));
+
+        // Supprimer l'avis
+        userReviewRepository.delete(userReview);
+
+        // Retourner une réponse sans contenu
+        return ResponseEntity.noContent().build();
+    }
 
 
     private UserReviewDTO convertToDTO(UserReview review) {
