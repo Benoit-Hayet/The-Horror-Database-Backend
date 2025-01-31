@@ -69,6 +69,7 @@ public class MovieController {
     }
 
 
+
     @PostMapping
    public ResponseEntity<MovieDTO> createMovie(@RequestBody Movie movie, @RequestHeader("Authorization") String authorizationHeader) {
        String token = authorizationHeader.replace("Bearer ", "");
@@ -100,18 +101,5 @@ public class MovieController {
         }
     }
 
-
-    @GetMapping("/search-between-release-date")
-    public ResponseEntity<List<Movie>> getMoviesBetweenReleaseYear(@RequestParam Integer startYear, @RequestParam Integer endYear) {
-        if (startYear > endYear) {
-            return ResponseEntity.badRequest().body(null);
-        }
-        List<Movie> movies = movieRepository.findByReleaseYearBetween(startYear, endYear);
-
-        if (movies.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(movies);
-    }
 }
 
