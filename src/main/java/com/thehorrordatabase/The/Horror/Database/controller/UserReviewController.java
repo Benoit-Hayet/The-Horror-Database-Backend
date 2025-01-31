@@ -10,6 +10,7 @@ import com.thehorrordatabase.The.Horror.Database.repository.UserRepository;
 import com.thehorrordatabase.The.Horror.Database.repository.UserReviewRepository;
 import com.thehorrordatabase.The.Horror.Database.service.JwtService;
 import io.jsonwebtoken.Claims;
+import jakarta.persistence.PostUpdate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -139,7 +140,19 @@ public class UserReviewController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userReviewDTO);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<UserReviewDTO> updateReview(@PathVariable Long id, @RequestBody UserReview userReview) {
+        UserReview existingReview = userReviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Avis non trouvé avec l'ID : " + id));
 
+        existingReview.setReview(userReview.getReview());
+        existingReview.setRating(userReview.getRating());
+
+        UserReview updatedReview = userReviewRepository.save(existingReview);
+
+        UserReviewDTO updatedReviewDTO = convertToDTO(updatedReview);
+        return ResponseEntity.ok(updatedReviewDTO);
+    }
 
 
     @DeleteMapping("/{id}")
@@ -148,13 +161,10 @@ public class UserReviewController {
         UserReview userReview = userReviewRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Avis non trouvé avec l'ID : " + id));
 
-        // Supprimer l'avis
         userReviewRepository.delete(userReview);
 
-        // Retourner une réponse sans contenu
         return ResponseEntity.noContent().build();
     }
-
 
     private UserReviewDTO convertToDTO(UserReview review) {
         UserReviewDTO reviewDTO = new UserReviewDTO();
