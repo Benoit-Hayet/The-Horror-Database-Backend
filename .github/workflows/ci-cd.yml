@@ -26,6 +26,9 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: fix mvnw permission
+        run: chmod +x ./mvnw
+
       - name: 🚀 Cache Maven dependencies
         uses: actions/cache@v3
         with:
