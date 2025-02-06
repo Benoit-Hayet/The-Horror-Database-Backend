@@ -29,7 +29,7 @@ jobs:
       - name: Fix mvnw permission
         run: chmod +x ./mvnw
 
-      - name: 🚀 Cache Maven dependencies
+      - name: Cache Maven dependencies
         uses: actions/cache@v3
         with:
           path: ~/.m2
