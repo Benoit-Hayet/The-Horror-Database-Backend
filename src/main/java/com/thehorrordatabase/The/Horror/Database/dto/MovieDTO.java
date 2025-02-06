@@ -1,71 +1,25 @@
-package com.thehorrordatabase.The.Horror.Database.model;
+package com.thehorrordatabase.The.Horror.Database.dto;
 
-import jakarta.persistence.*;
+import com.thehorrordatabase.The.Horror.Database.model.EStatus;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
-
-@Entity
-public class Movie {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class MovieDTO {
     private Long id;
-
-    @Column(name = "title", nullable = false, length = 255)
     private String title;
-
-    @Column(name = "country", nullable = false, length = 255)
     private String country;
-
-    @Column(name = "release_year", nullable = false)
     private Integer releaseYear;
-
-    @Column(name = "director", nullable = false, length = 100)
     private String director;
-
-    @Column(name = "synopsis", columnDefinition = "TEXT")
     private String synopsis;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 50)
     private EStatus status;
-
-    @Column(name = "poster_url", length = 500)
     private String posterUrl;
-
-    @Column(name = "created_by", nullable = false)
     private Integer createdBy;
-
-    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+  private List<String> genreName;
 
-    @ManyToMany
-    @JoinTable(
-            name = "movie_genre",
-            joinColumns = @JoinColumn(name = "movie_id"),
-            inverseJoinColumns = @JoinColumn(name = "genre_id")
-    )
-    private List<Genre> genres;
-
-    @OneToMany(mappedBy = "movie")
-    private List<UserReview> userReviews;
-
-
-    public Movie() {
-    }
-
-    public Movie(String title, String country, Integer releaseYear, String director, String synopsis, EStatus status, String posterUrl, Integer createdBy, LocalDateTime createdAt, List<Genre> genres) {
-        this.title = title;
-        this.country = country;
-        this.releaseYear = releaseYear;
-        this.director = director;
-        this.synopsis = synopsis;
-        this.status = status;
-        this.posterUrl = posterUrl;
-        this.createdBy = createdBy;
-        this.createdAt = createdAt;
-        this.genres = genres;
-    }
+  private List<UserDTO> users;
+  private List <UserReviewDTO> userReviews;
 
     // Getters and Setters
 
@@ -149,19 +103,27 @@ public class Movie {
         this.createdAt = createdAt;
     }
 
-    public List<Genre> getGenres() {
-        return genres;
+    public List<String> getGenreName() {
+        return genreName;
     }
 
-    public void setGenres(List<Genre> genres) {
-        this.genres = genres;
+    public void setGenreName(List<String> genreName) {
+        this.genreName = genreName;
     }
 
-    public List<UserReview> getUserReview() {
+    public List<UserDTO> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<UserDTO> users) {
+        this.users = users;
+    }
+
+    public List<UserReviewDTO> getUserReview() {
         return userReviews;
     }
 
-    public void setUserReview(List<UserReview> userReview) {
+    public void setUserReview(List<UserReviewDTO> userReview) {
         this.userReviews = userReview;
     }
 }
