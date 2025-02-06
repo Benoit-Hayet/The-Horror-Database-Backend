@@ -94,7 +94,7 @@ jobs:
           chmod 600 /home/${{ secrets.SERVER_USER }}/the-horror-database-api/.env.prod
           "
 
-      - name: 🐳 Build Docker image and deploy
+      - name: 🐳 Build Docker image and deploye
         run: |
           ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
           cd /home/ubuntu /the-horror-database-api &&
