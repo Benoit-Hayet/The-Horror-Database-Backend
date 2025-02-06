@@ -62,7 +62,7 @@ jobs:
       - name: 🔗 Test SSH connection
         run: ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "echo 'SSH connection successful!'"
 
-      - name: 📂 Clone or update project on server
+      - name: 📂 Clone or update project on servers
         run: |
           ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
           if [ -d /home/${{ secrets.SERVER_USER }}/the-horror-database-api ]; then
