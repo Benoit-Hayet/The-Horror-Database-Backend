@@ -97,6 +97,7 @@ jobs:
       - name: 🐳 Build Docker image and deploy
         run: |
           ssh -i ~/.ssh/id_ed25519_the-horror-database -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
-          cd /home/${{ secrets.SERVER_USER }}/the-horror-database-api &&
+          cd /home/ubuntu /the-horror-database-api &&
           docker compose down &&
-          docker compose --env-file .env.prod up -d --build"
+          docker compose --env-file .env.prod up -d --build
+          "
