@@ -78,9 +78,10 @@ jobs:
             fi
           else
             echo 'Cloning repository...';
-            git clone git@github-theHorrorDatabase-back:Benoit-Hayet/The-Horror-Database-Backend.git /home/ubuntu/the-horror-database-api;
+            git clone git@github.com:Benoit-Hayet/The-Horror-Database-Backend.git /home/${{ secrets.SERVER_USER }}/the-horror-database-api;
           fi
           "
+      
 
       - name: ⚙️ Generate .env file on server
         run: |
