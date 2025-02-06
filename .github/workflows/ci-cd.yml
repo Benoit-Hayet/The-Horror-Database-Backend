@@ -44,9 +44,9 @@ jobs:
 
   deploy:
     name: Deploy Application
-    needs: build-and-test  # Déployer seulement si les tests réussissent
+    needs: build-and-test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'  # Déployer uniquement sur main
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: 📥 Checkout code
@@ -57,7 +57,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519_the-horror-database
           chmod 600 ~/.ssh/id_ed25519_the-horror-database
-          ssh-keyscan -H github.com ~/.ssh/known_hosts
+          ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 
       - name: 🔗 Test SSH connection
         run: ssh -i ~/.ssh/id_ed25519_the-horror-database -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "echo 'SSH connection successful!'"
@@ -66,19 +66,11 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_ed25519_the-horror-database -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
           if [ -d /home/${{ secrets.SERVER_USER }}/the-horror-database-api ]; then
-            if [ -d /home/${{ secrets.SERVER_USER }}/the-horror-database-api/.git ]; then
-              echo 'Repository already exists. Pulling latest changes...';
-              cd /home/${{ secrets.SERVER_USER }}/the-horror-database-api;
-              git reset --hard;
-              git pull origin main;
-            else
-              echo 'Invalid directory exists. Cleaning up and cloning again...';
-              rm -rf /home/${{ secrets.SERVER_USER }}/the-horror-database-api;
-              git clone git@${{ secrets.REPOSITORY_NAME }} /home/${{ secrets.SERVER_USER }}/the-horror-database-api;
-            fi
+            cd /home/${{ secrets.SERVER_USER }}/the-horror-database-api
+            git reset --hard
+            git pull origin main
           else
-            echo 'Cloning repository...';
-            git clone git@github-theHorrorDatabase-back:Benoit-Hayet/The-Horror-Database-Backend.git /home/ubuntu/the-horror-database-api;
+            git clone git@github.com:Benoit-Hayet/The-Horror-Database-Backend.git /home/${{ secrets.SERVER_USER }}/the-horror-database-api
           fi
           "
 
@@ -97,7 +89,7 @@ jobs:
       - name: 🐳 Build Docker image and deploy
         run: |
           ssh -i ~/.ssh/id_ed25519_the-horror-database -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
-          cd /home/ubuntu /the-horror-database-api &&
+          cd /home/${{ secrets.SERVER_USER }}/the-horror-database-api &&
           docker compose down &&
           docker compose --env-file .env.prod up -d --build
           "
