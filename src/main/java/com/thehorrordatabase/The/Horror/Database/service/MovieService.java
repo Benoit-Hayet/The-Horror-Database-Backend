@@ -1,4 +1,5 @@
 package com.thehorrordatabase.The.Horror.Database.service;
+
 import com.thehorrordatabase.The.Horror.Database.dto.MovieDTO;
 import com.thehorrordatabase.The.Horror.Database.mapper.MovieMapper;
 import com.thehorrordatabase.The.Horror.Database.model.Genre;
@@ -30,10 +31,11 @@ public class MovieService {
     }
 
 
-    public List<MovieDTO>getAllMovies() {
+    public List<MovieDTO> getAllMovies() {
         List<Movie> movies = movieRepository.findAll();
         return movies.stream().map(movieMapper::convertToDTO).collect(Collectors.toList());
     }
+
     public MovieDTO getMovieById(Long id) {
         Movie movie = movieRepository.findById(id).orElse(null);
         if (movie == null) {
@@ -48,7 +50,6 @@ public class MovieService {
                 .map(movieMapper::convertToDTO)
                 .collect(Collectors.toList());
     }
-
 
 
     public MovieDTO createMovie(Movie movie) {
@@ -79,7 +80,7 @@ public class MovieService {
     }
 
 
-    public MovieDTO updateMovie(Long id,Movie movieDetails) {
+    public MovieDTO updateMovie(Long id, Movie movieDetails) {
 
         Movie movie = movieRepository.findById(id).orElse(null);
         if (movie == null) {
@@ -98,24 +99,19 @@ public class MovieService {
             List<Genre> validGenres = new ArrayList<>();
             for (Genre genre : movieDetails.getGenres()) {
                 if (genre.getId() != null) {
-                    // Vérification d'un genre existant
                     Genre existingGenre = genreRepository.findById(genre.getId()).orElse(null);
                     if (existingGenre != null) {
                         validGenres.add(existingGenre);
                     } else {
                         return null;
-                        // Genre non trouvé, retour d'une erreur
                     }
                 } else {
-                    // Création d'un nouveau genre
                     Genre savedGenre = genreRepository.save(genre);
                     validGenres.add(savedGenre);
                 }
             }
-            // Mettre à jour la liste des images associés
             movie.setGenres(validGenres);
         } else {
-            // Si aucun genre n'est fournie, on nettoie la liste des genres associés
             movie.getGenres().clear();
         }
 
@@ -123,7 +119,7 @@ public class MovieService {
         return movieMapper.convertToDTO(updatedMovie);
     }
 
-    public boolean deleteMovie (Long id) {
+    public boolean deleteMovie(Long id) {
         Movie movie = movieRepository.findById(id).orElse(null);
         if (movie == null) {
             return false;
@@ -134,3 +130,5 @@ public class MovieService {
     }
 
 }
+
+

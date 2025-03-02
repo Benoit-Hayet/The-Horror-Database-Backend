@@ -50,7 +50,6 @@ public class UserController {
     }
 
 
-
     @PostMapping
     public ResponseEntity<UserDTO> createUser(@RequestBody User user) {
         User savedUser = userRepository.save(user);
