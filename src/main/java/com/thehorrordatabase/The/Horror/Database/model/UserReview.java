@@ -7,11 +7,11 @@ import java.time.LocalDate;
 @Entity
 public class UserReview {
 
- @Id
- @GeneratedValue(strategy = GenerationType.IDENTITY)
- private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
- @ManyToOne
+    @ManyToOne
     @JoinColumn(name = "movieId")
     private Movie movie;
 
@@ -20,10 +20,10 @@ public class UserReview {
     private User user;
 
 
-    @Column(nullable = false,length = 1000)
+    @Column(nullable = false, length = 1000)
     private String review;
 
- @Column(nullable = false)
+    @Column(nullable = false)
     private short rating;
 
     @Column(name = "created_at")
