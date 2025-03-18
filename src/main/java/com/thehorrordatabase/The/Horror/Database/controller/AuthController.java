@@ -63,16 +63,20 @@ public class AuthController {
     }
 
 
-
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody UserRegistrationDTO userRegistrationDTO) {
         User registeredUser = userService.registerUser(
-                userRegistrationDTO.getEmail(),
-                userRegistrationDTO.getPassword(),
-                Set.of("ROLE_USER"),
                 userRegistrationDTO.getFirstName(),
                 userRegistrationDTO.getLastName(),
-                userRegistrationDTO.getBirthdate()
+                userRegistrationDTO.getEmail(),
+                userRegistrationDTO.getPassword(),
+                userRegistrationDTO.getUsername(),
+                userRegistrationDTO.getAvatarUrl(),
+                Set.of("ROLE_USER"),
+                userRegistrationDTO.getBirthdate(),
+                userRegistrationDTO.getCreatedAt()
+
+
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
     }
@@ -86,6 +90,7 @@ public class AuthController {
         );
         return ResponseEntity.ok(token);
     }
+
     private UserDTO convertToDTO(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());

@@ -27,18 +27,22 @@ public class UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 
-    public User registerUser(String email, String password, Set<String> roles, String lastname, String firstname, LocalDate birthdate) {
-        if(userRepository.existsByEmail(email)) {
+    public User registerUser(String lastname, String firstname, String email, String password, String username, String avatarUrl, Set<String> roles, LocalDate birthdate, LocalDate createdAt) {
+        if (userRepository.existsByEmail(email)) {
             throw new RuntimeException("Cet email est déjà utilisé");
         }
 
         User user = new User();
-        user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password)); // Encodage du mot de passe avec BCrypt
-        user.setRoles(roles);
         user.setLastName(lastname);
         user.setFirstName(firstname);
-      user.setBirthdate(birthdate);
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setUsername(username);
+        user.setAvatarUrl(avatarUrl);
+        user.setRoles(roles);
+        user.setBirthdate(birthdate);
+        user.setCreatedAt(createdAt);
+
         return userRepository.save(user);
     }
 }

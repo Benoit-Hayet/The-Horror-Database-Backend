@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-
 import java.util.List;
 
 @RestController
@@ -28,7 +27,7 @@ public class MovieController {
     public MovieController(MovieRepository movieRepository, GenreRepository genreRepository, MovieService movieService, JwtService jwtService) {
         this.movieRepository = movieRepository;
         this.genreRepository = genreRepository;
-        this.movieService=movieService;
+        this.movieService = movieService;
         this.jwtService = jwtService;
     }
 
@@ -69,23 +68,21 @@ public class MovieController {
     }
 
 
-
     @PostMapping
-   public ResponseEntity<MovieDTO> createMovie(@RequestBody Movie movie, @RequestHeader("Authorization") String authorizationHeader) {
-       String token = authorizationHeader.replace("Bearer ", "");
-       Claims claims = jwtService.extractClaims(token);
-       Integer userId = claims.get("userId", Integer.class).intValue();
-       movie.setCreatedBy(userId);
-       MovieDTO savedMovie = movieService.createMovie(movie);
-       return ResponseEntity.status(HttpStatus.CREATED).body(savedMovie);
-   }
-
+    public ResponseEntity<MovieDTO> createMovie(@RequestBody Movie movie, @RequestHeader("Authorization") String authorizationHeader) {
+        String token = authorizationHeader.replace("Bearer ", "");
+        Claims claims = jwtService.extractClaims(token);
+        Integer userId = claims.get("userId", Integer.class).intValue();
+        movie.setCreatedBy(userId);
+        MovieDTO savedMovie = movieService.createMovie(movie);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedMovie);
+    }
 
 
     @PutMapping("/{id}")
     public ResponseEntity<MovieDTO> updateMovie(@PathVariable Long id, @RequestBody Movie movieDetails) {
 
-        MovieDTO updatedMovie = movieService.updateMovie(id,movieDetails);
+        MovieDTO updatedMovie = movieService.updateMovie(id, movieDetails);
         if (updatedMovie == null) {
             return ResponseEntity.notFound().build();
         }
@@ -93,13 +90,21 @@ public class MovieController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMovie(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteMovie(@PathVariable Long id, @RequestHeader("Authorization") String authorizationHeader) {
+        String token = authorizationHeader.replace("Bearer ", "");
+        Claims claims = jwtService.extractClaims(token);
+
+        // Vérifiez les rôles ou autorisations ici si nécessaire
+        List<String> roles = claims.get("roles", List.class);
+        System.out.println("Roles de l'utilisateur: " + roles);
+
         if (movieService.deleteMovie(id)) {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();
         }
     }
+
 
 }
 

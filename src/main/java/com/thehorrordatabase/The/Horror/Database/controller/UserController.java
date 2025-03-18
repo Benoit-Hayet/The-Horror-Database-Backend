@@ -3,7 +3,9 @@ package com.thehorrordatabase.The.Horror.Database.controller;
 import com.thehorrordatabase.The.Horror.Database.dto.UserDTO;
 import com.thehorrordatabase.The.Horror.Database.model.User;
 import com.thehorrordatabase.The.Horror.Database.repository.UserRepository;
+import com.thehorrordatabase.The.Horror.Database.service.JwtService;
 import com.thehorrordatabase.The.Horror.Database.service.UserService;
+import io.jsonwebtoken.Claims;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,15 +25,22 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final UserService userService;
+    private final JwtService jwtService;
 
-    public UserController(UserRepository userRepository, UserService userService) {
+    public UserController(UserRepository userRepository, UserService userService, JwtService jwtService) {
         this.userRepository = userRepository;
         this.userService = userService;
+        this.jwtService = jwtService;
     }
 
     @GetMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
+    public ResponseEntity<List<UserDTO>> getAllUsers(@RequestHeader("Authorization") String authorizationHeader) {
+        String token = authorizationHeader.replace("Bearer ", "");
+        Claims claims = jwtService.extractClaims(token);
+
+        // Vérifiez les rôles ou autorisations ici si nécessaire
+        List<String> roles = claims.get("roles", List.class);
         List<User> users = userRepository.findAll();
         if (users.isEmpty()) {
             return ResponseEntity.noContent().build();
@@ -39,6 +48,7 @@ public class UserController {
         List<UserDTO> userDTOS = users.stream().map(this::convertToDTO).collect(Collectors.toList());
         return ResponseEntity.ok(userDTOS);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
@@ -48,7 +58,6 @@ public class UserController {
         }
         return ResponseEntity.ok(convertToDTO(user));
     }
-
 
 
     @PostMapping
@@ -78,6 +87,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         User user = userRepository.findById(id).orElse(null);
         if (user == null) {

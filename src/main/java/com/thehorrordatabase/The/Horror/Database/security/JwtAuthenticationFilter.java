@@ -5,6 +5,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +20,8 @@ import java.util.Date;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
@@ -33,7 +37,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         String requestPath = request.getServletPath();
 
-        // Exclure les endpoints publics du traitement JWT
         if (requestPath.equals("/auth/login") || requestPath.equals("/auth/register")) {
             filterChain.doFilter(request, response);
             return;
@@ -43,13 +46,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String jwt = authHeader.substring(7);
             String username = jwtService.extractClaims(jwt).getSubject();
 
+            logger.debug("JWT extracted: {}", jwt);
+            logger.debug("Username from JWT: {}", username);
+
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                logger.debug("User details loaded: {}", userDetails);
+
                 if (jwtService.extractClaims(jwt).getExpiration().after(new Date())) {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities()
                     );
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                    logger.debug("Authentication set in SecurityContext: {}", authentication);
                 }
             }
         }
