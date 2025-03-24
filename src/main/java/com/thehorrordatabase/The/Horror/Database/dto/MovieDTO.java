@@ -5,6 +5,15 @@ import com.thehorrordatabase.The.Horror.Database.model.EStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class MovieDTO {
     private Long id;
     private String title;
@@ -16,10 +25,10 @@ public class MovieDTO {
     private String posterUrl;
     private Integer createdBy;
     private LocalDateTime createdAt;
-  private List<String> genreName;
+    private List<String> genreName;
 
-  private List<UserDTO> users;
-  private List <UserReviewDTO> userReviews;
+    private List<UserDTO> users;
+    private List<UserReviewDTO> userReviews;
 
     // Getters and Setters
 
