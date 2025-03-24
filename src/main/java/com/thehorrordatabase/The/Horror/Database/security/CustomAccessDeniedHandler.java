@@ -26,8 +26,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType(APPLICATION_JSON_VALUE);
 
         Map<String, String> error = new HashMap<>();
-        error.put("access_denied", "true");
-        error.put("error_message", "You do not have sufficient rights to access this resource");
+        error.put("Accès refusé : ", "Oui");
+        error.put("Erreur : ", "Vous n'avez pas les droits suffisants pour accéder a cette ressource");
 
         new ObjectMapper().writeValue(response.getOutputStream(), error);
     }
