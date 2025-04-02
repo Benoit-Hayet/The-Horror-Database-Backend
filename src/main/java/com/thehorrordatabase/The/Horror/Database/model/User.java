@@ -1,6 +1,5 @@
 package com.thehorrordatabase.The.Horror.Database.model;
 
-
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

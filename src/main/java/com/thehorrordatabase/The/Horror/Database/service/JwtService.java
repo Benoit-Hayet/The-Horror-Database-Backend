@@ -22,16 +22,14 @@ public class JwtService {
 
     public String generateToken(UserDetails userDetails, Long userId) {
         return Jwts.builder()
-                .setSubject(userDetails.getUsername()) // Ajoute le username comme "sub"
-                .claim("roles", userDetails.getAuthorities()) // Ajoute les rôles
-                .claim("userId", userId) // Ajoute l'ID utilisateur
-                .setIssuedAt(Date.from(Instant.now())) // Date d'émission
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration)) // Date d'expiration
-                .signWith(SignatureAlgorithm.HS256, secretKey) // Signature avec la clé secrète
+                .setSubject(userDetails.getUsername())
+                .claim("roles", userDetails.getAuthorities())
+                .claim("userId", userId)
+                .setIssuedAt(Date.from(Instant.now()))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
-
-
 
     public Claims extractClaims(String token) {
         return Jwts.parser()
@@ -49,3 +47,4 @@ public class JwtService {
         }
     }
 }
+

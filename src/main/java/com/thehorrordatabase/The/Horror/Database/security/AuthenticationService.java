@@ -23,17 +23,16 @@ public class AuthenticationService {
     }
 
     public String authenticate(String email, String password) {
-        // Authentification de l'utilisateur
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password)
         );
 
-        // Récupérer les informations de l'utilisateur
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
 
-        // Générer le token avec l'ID utilisateur
         return jwtService.generateToken(userDetails, user.getId());
     }
 }
+
+
