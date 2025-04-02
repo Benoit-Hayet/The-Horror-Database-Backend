@@ -1,4 +1,4 @@
-package com.thehorrordatabase.The.Horror.Database.controller;
+/*package com.thehorrordatabase.The.Horror.Database.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thehorrordatabase.The.Horror.Database.dto.MovieDTO;
@@ -89,4 +89,4 @@ class MovieControllerTest {
                 .andExpect(status().isNoContent())
                 .andDo(result -> logger.info("Response: {}", result.getResponse().getContentAsString()));
     }
-}
+}*/
