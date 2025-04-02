@@ -88,5 +88,4 @@ class MovieControllerTest {
                         .header("Authorization", "Bearer YOUR_TOKEN"))
                 .andExpect(status().isNoContent())
                 .andDo(result -> logger.info("Response: {}", result.getResponse().getContentAsString()));
-    }
-}*/
+    }*/
