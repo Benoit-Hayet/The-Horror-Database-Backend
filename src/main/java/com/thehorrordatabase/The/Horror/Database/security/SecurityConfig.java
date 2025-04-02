@@ -87,7 +87,6 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
 
-
         return http.build();
     }
 

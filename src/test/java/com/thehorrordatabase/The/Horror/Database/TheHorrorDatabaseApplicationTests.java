@@ -2,12 +2,13 @@ package com.thehorrordatabase.The.Horror.Database;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("test")
 @SpringBootTest
-class TheHorrorDatabaseApplicationTests {
+public class TheHorrorDatabaseApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
-
+    @Test
+    void contextLoads() {
+    }
 }
