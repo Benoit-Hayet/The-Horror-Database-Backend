@@ -41,7 +41,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Pas d'utilisateur authentifié
         }
 
-        // Récupérer l'id de l'utilisateur authentifié depuis le token JWT
+        // Récupérer l'id de l'utilisateur authentifié depuis letoken JWT
         String currentUserIdStr = authentication.getPrincipal().toString();
         Long currentUserId;
 
