@@ -14,11 +14,6 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    @Value("${security.jwt.secret-key}")
-    private String secretKey;
-
-    @Value("${security.jwt.expiration-time}")
-    private long jwtExpiration;
 
     public String generateToken(UserDetails userDetails, Long userId) {
         return Jwts.builder()
@@ -26,21 +21,21 @@ public class JwtService {
                 .claim("roles", userDetails.getAuthorities())
                 .claim("userId", userId)
                 .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setExpiration(new Date(System.currentTimeMillis() + 7200))
+                .signWith(SignatureAlgorithm.HS256, "yoursecretkeyhereyoursecretkeyhereyousecretkeyhereyoursecretkeyhere")
                 .compact();
     }
 
     public Claims extractClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(secretKey)
+                .setSigningKey("yoursecretkeyhereyoursecretkeyhereyousecretkeyhereyoursecretkeyhere")
                 .parseClaimsJws(token)
                 .getBody();
     }
 
     public boolean validateJwtToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(secretKey.getBytes()).build().parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey("yoursecretkeyhereyoursecretkeyhereyousecretkeyhereyoursecretkeyhere".getBytes()).build().parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             return false;
