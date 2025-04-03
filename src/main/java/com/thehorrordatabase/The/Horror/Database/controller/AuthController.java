@@ -36,32 +36,28 @@ public class AuthController {
     public ResponseEntity<UserDTO> getProfile(@PathVariable Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        // Vérifier si l'utilisateur est authentifié
+
         if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal() == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Pas d'utilisateur authentifié
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        // Récupérer l'id de l'utilisateur authentifié depuis letoken JWT
         String currentUserIdStr = authentication.getPrincipal().toString();
         Long currentUserId;
 
         try {
-            currentUserId = Long.parseLong(currentUserIdStr); // Convertir en Long
+            currentUserId = Long.parseLong(currentUserIdStr);
         } catch (NumberFormatException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Erreur dans le token
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        // Si l'id dans l'URL ne correspond pas à celui de l'utilisateur authentifié, refuser l'accès
         if (!id.equals(currentUserId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // Accès interdit
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-
-        // Trouver l'utilisateur avec l'id
+        
         return userRepository.findById(id)
-                .map(user -> ResponseEntity.ok(convertToDTO(user))) // Retourner les données sous forme de DTO
+                .map(user -> ResponseEntity.ok(convertToDTO(user)))
                 .orElseGet(() -> ResponseEntity.notFound().build()); // Utilisateur non trouvé
     }
-
 
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody UserRegistrationDTO userRegistrationDTO) {
