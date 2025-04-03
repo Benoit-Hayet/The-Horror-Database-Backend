@@ -88,8 +88,8 @@ jobs:
           echo 'SPRING_PROFILES_ACTIVE=prod' > /home/${{ secrets.SERVER_USER }}/the-horror-database-api/.env.prod &&
           echo 'DB_NAME=${{ secrets.DB_NAME }}' >> /home/${{ secrets.SERVER_USER }}/the-horror-database-api/.env.prod &&
           echo 'SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}' >> /home/${{ secrets.SERVER_USER }}/the-horror-database-api/.env.prod &&
-          echo 'SECURITY_JWT_SECRET_KEY=${{ secrets.SECURITY_JWT_SECRET_KEY }}' >> /home/${{ secrets.SERVER_USER }}/${{ secrets.PROJECT_NAME }}/.env.prod &&
-          echo 'SECURITY_JWT_EXPIRATION_TIME=${{ secrets.SECURITY_JWT_EXPIRATION_TIME }}' >> /home/${{ secrets.SERVER_USER }}/${{ secrets.PROJECT_NAME }}/.env.prod &&
+          echo 'SECURITY_JWT_SECRET_KEY=${{ secrets.SECURITY_JWT_SECRET_KEY }}' >> /home/${{ secrets.SERVER_USER }}/the-horror-database-api/.env.prod &&
+          echo 'SECURITY_JWT_EXPIRATION_TIME=${{ secrets.SECURITY_JWT_EXPIRATION_TIME }}' >> /home/${{ secrets.SERVER_USER }}/the-horror-database-api/.env.prod &&
           echo 'SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}' >> /home/${{ secrets.SERVER_USER }}/the-horror-database-api/.env.prod &&
           echo 'SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}' >> /home/${{ secrets.SERVER_USER }}/the-horror-database-api/.env.prod &&
           echo 'SPRING_JPA_HIBERNATE_DDL_AUTO=${{ secrets.SPRING_JPA_HIBERNATE_DDL_AUTO }}' >> /home/${{ secrets.SERVER_USER }}/the-horror-database-api/.env.prod &&
