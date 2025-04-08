@@ -64,47 +64,46 @@ Authentification
 
 L'API utilise l'authentification JWT pour sécuriser les endpoints. Les utilisateurs doivent inclure un jeton JWT valide dans l'en-tête Authorization pour accéder aux endpoints protégés.
 
-Ajouter un nouveau film
-
+Ajouter un nouveau film : 
 Endpoint: POST /movies
 Protection: Accessible uniquement aux utilisateurs avec les rôles USER ou ADMIN.
-Mettre à jour un film
 
+Mettre à jour un film : 
 Endpoint: PUT /movies/{id}
 Protection: Accessible uniquement aux utilisateurs avec le rôle ADMIN.
-Supprimer un film
 
+Supprimer un film : 
 Endpoint: DELETE /movies/{id}
 Protection: Accessible uniquement aux utilisateurs avec le rôle ADMIN.
-Récupérer les films d'un utilisateur
 
+Récupérer les films d'un utilisateur : 
 Endpoint: GET /movies/user/{userId}
 Protection: Accessible uniquement aux utilisateurs authentifiés, et l'utilisateur doit correspondre à l'ID spécifié.
-Ajouter une critique
 
+Ajouter une critique : 
 Endpoint: POST /reviews
 Protection: Accessible uniquement aux utilisateurs avec les rôles USER ou ADMIN.
-Modifier une critique
 
+Modifier une critique:
 Endpoint: PATCH /reviews/{id}
 Protection: Accessible uniquement aux utilisateurs avec les rôles USER ou ADMIN.
-Supprimer une critique
 
+Supprimer une critique:
 Endpoint: DELETE /reviews/{id}
 Protection: Accessible uniquement aux utilisateurs avec les rôles USER ou ADMIN.
-Ajouter un favori
 
+Ajouter un favori :
 Endpoint: POST /favorites
 Protection: Accessible uniquement aux utilisateurs avec les rôles USER ou ADMIN.
-Supprimer un favori
 
+Supprimer un favori :
 Endpoint: DELETE /favorites/{id}
 Protection: Accessible uniquement aux utilisateurs avec les rôles USER ou ADMIN.
-Supprimer un utilisateur
 
+Supprimer un utilisateur :
 Endpoint: DELETE /users/{id}
 Protection: Accessible uniquement aux utilisateurs avec le rôle ADMIN.
-Accéder au profil utilisateur
 
+Accéder au profil utilisateur:
 Endpoint: GET /auth/profile/{id}
 Protection: Accessible uniquement aux utilisateurs avec les rôles USER ou ADMIN.
